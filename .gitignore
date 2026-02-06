@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+*.log
+logs/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+.DS_Store
+data/
+certs/*.key
+certs/*.cert
+certs/*.pem
+nul
+.claude/

@@ -1,0 +1,8 @@
+node_modules/
+.env
+logs/*.log
+logs/*-audit.json
+data/
+*.db
+*.db-shm
+*.db-wal
