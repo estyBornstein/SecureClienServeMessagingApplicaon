@@ -20,11 +20,11 @@ A production-ready secure messaging platform featuring **true end-to-end encrypt
   <tr>
     <td align="center">
       <strong>Login & Registration</strong><br><br>
-      <video src="./assets/login.mp4" width="400" controls autoplay loop muted></video>
+      <img src="./assets/login.gif" width="400" alt="Login Demo" />
     </td>
     <td align="center">
       <strong>Real-time Encrypted Chat</strong><br><br>
-      <video src="./assets/CHATACTIVE.mp4" width="400" controls autoplay loop muted></video>
+      <img src="./assets/CHATACTIVE.gif" width="400" alt="Chat Demo" />
     </td>
   </tr>
 </table>
@@ -91,6 +91,21 @@ A production-ready secure messaging platform featuring **true end-to-end encrypt
 - **Hebrew RTL Interface** - Clean, professional design with full right-to-left support
 - **90 Unit Tests** - Comprehensive coverage for auth, encryption, and messaging
 - **Scalable Architecture** - Node.js clustering support, database adapter pattern
+
+---
+
+## Prerequisites
+
+| Requirement | Version | Notes |
+|-------------|---------|-------|
+| **Node.js** | 18+ | Required for Web Crypto API compatibility |
+| **npm** | 9+ | Comes with Node.js 18+ |
+| **OpenSSL** | Any | For SSL certificate generation. On Windows: available via Git Bash or `choco install openssl` |
+| **Modern Browser** | See below | Must support Web Crypto API |
+
+**Supported browsers:** Chrome 37+, Firefox 34+, Edge 12+, Safari 11+
+
+**Ports required:** `3001` (backend), `5173` (frontend) — must be available
 
 ---
 
@@ -327,6 +342,22 @@ CLUSTER_WORKERS=4  # or leave empty for auto-detect (number of CPU cores)
 
 ---
 
+## Performance Metrics
+
+| Metric | Value | Notes |
+|--------|-------|-------|
+| **Message delivery latency** | ~50-100ms | When recipient is connected via Long Polling |
+| **Poll hold duration** | 30 seconds | Server holds connection before returning empty response |
+| **RSA-2048 key generation** | ~200-500ms | One-time cost during registration (client-side) |
+| **AES-256 encrypt/decrypt** | <1ms | Per message, negligible overhead |
+| **Max message size** | 20KB | Encrypted payload limit |
+| **History page size** | 100 messages | Per page, configurable via `pageSize` query param |
+| **Rate limits** | 5 login / 3 register / 30 msg per min | Per-IP enforcement |
+| **SQLite (WAL mode)** | ~100 concurrent users | Development target; use PostgreSQL for production |
+| **In-memory poll map** | ~1-2KB per client | Single-process; not shared across cluster workers |
+
+---
+
 ## Production Recommendations
 
 - [x] **Rate limiting**: Implemented on auth and message endpoints
@@ -396,6 +427,25 @@ npm test
 - `LoginForm.test.jsx`, `RegisterForm.test.jsx` - Auth components
 - `ChatPage.test.jsx` - Message rendering
 - `useLongPolling.test.js` - Polling connection logic
+
+---
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| **"Your connection is not private"** (Chrome) / **SSL cert warning** | Expected with self-signed certs. Click **Advanced** > **Proceed to localhost** in Chrome, or **Accept the Risk** in Firefox |
+| **`ERR_SSL_PROTOCOL_ERROR`** | Make sure you're using `https://` not `http://`. Both client and server require HTTPS |
+| **CORS errors in browser console** | Verify `CLIENT_URL` in backend `.env` matches your frontend URL exactly (including port) |
+| **"Cannot connect to server"** | Check backend is running on port 3001. Run `npm run dev` in the `backend/` directory |
+| **Messages show "[Unable to decrypt]"** | Private key mismatch. Clear localStorage and re-register: run `localStorage.clear()` in browser console, then create a new account |
+| **Certificate generation failed** | Ensure OpenSSL is installed. On Windows: install via Git Bash or `choco install openssl` |
+| **Database locked errors** | Stop all running server instances. Only one process can write to SQLite at a time |
+| **Seed script fails** | Delete `backend/data/messaging.db` and run `npm run seed` again |
+| **Long Polling not receiving messages** | Check browser DevTools **Network** tab for a pending `/api/messages/poll` request. If missing, refresh the page |
+| **Login works but chat is empty** | Run `npm run seed` to populate test messages, or send a new message from another logged-in user |
+| **Port already in use** | Kill the process: `npx kill-port 3001` or `npx kill-port 5173` |
+| **Tests failing** | Run `npm install` in both `backend/` and `frontend/`. Ensure no server is running during tests |
 
 ---
 
