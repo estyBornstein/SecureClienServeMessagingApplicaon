@@ -113,7 +113,7 @@ A production-ready secure messaging platform featuring **true end-to-end encrypt
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/estyBornstein/SecureClienServeMessagingApplicaon
 cd SecureClientServerMessagingApplication
 
 # Backend setup
@@ -342,21 +342,6 @@ CLUSTER_WORKERS=4  # or leave empty for auto-detect (number of CPU cores)
 
 ---
 
-## Performance Metrics
-
-| Metric | Value | Notes |
-|--------|-------|-------|
-| **Message delivery latency** | ~50-100ms | When recipient is connected via Long Polling |
-| **Poll hold duration** | 30 seconds | Server holds connection before returning empty response |
-| **RSA-2048 key generation** | ~200-500ms | One-time cost during registration (client-side) |
-| **AES-256 encrypt/decrypt** | <1ms | Per message, negligible overhead |
-| **Max message size** | 20KB | Encrypted payload limit |
-| **History page size** | 100 messages | Per page, configurable via `pageSize` query param |
-| **Rate limits** | 5 login / 3 register / 30 msg per min | Per-IP enforcement |
-| **SQLite (WAL mode)** | ~100 concurrent users | Development target; use PostgreSQL for production |
-| **In-memory poll map** | ~1-2KB per client | Single-process; not shared across cluster workers |
-
----
 
 ## Production Recommendations
 
